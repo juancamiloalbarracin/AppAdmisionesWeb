@@ -22,12 +22,7 @@ mi-proyecto-java
 │       └── Estudiante.java      # Modelo de estudiante.
 ├── # Sistema Académico UDC - Migración Web
 
-## ✅ FASE 2 COMPLETADA: Login Web Funcional
 
-### 🎯 Objetivo Alcanzado
-Login web completamente funcional que replica **exactamente** la funcionalidad y diseño de `LoginView.java` usando servlets tradicionales con métodos GET y POST.
-
-### 📁 Estructura Actualizada del Proyecto
 
 ```
 mi-proyecto-java/
@@ -91,134 +86,6 @@ public class LoginServlet extends HttpServlet {
 }
 ```
 
-#### ✅ **login.jsp - Diseño Idéntico**
-- **Header azul oscuro**: `rgb(0, 38, 76)` - Exacto
-- **Campos con TitledBorder**: Replicados con CSS
-- **Checkboxes**: "Recordarme" y "PC público" funcionando
-- **Botones**: Mismo estilo y colores que Swing
-- **Footer**: Información de UNIMINUTO preservada
-- **Validaciones**: Mensajes de error idénticos
-
-#### ✅ **Gestión de Sesiones HTTP**
-- **currentUserEmail**: Migrado a `session.getAttribute("userEmail")`
-- **Duración inteligente**: 7 días si "Recordarme", 15 min si "PC público"
-- **Datos de usuario**: Completos en sesión para uso en otras vistas
-
-#### ✅ **MainServlet.java + main.jsp**
-- **Dashboard principal**: Con cards para cada funcionalidad
-- **Información del usuario**: Mostrada igual que MainView
-- **Navegación**: Enlaces a próximas funcionalidades
-- **Logout**: Limpia sesión y redirige con mensaje
-
-### 🛠️ Flujo de Autenticación Web
-
-```
-1. Usuario visita http://localhost:8080
-   ├── index.jsp (página bienvenida)
-   └── Click "Iniciar Sesión" → /login
-
-2. LoginServlet.doGet()
-   └── Muestra login.jsp (formulario)
-
-3. Usuario completa formulario y submit
-   └── LoginServlet.doPost()
-       ├── PRESERVADO: db.validarUsuario(email, password)
-       ├── Si válido: Crear sesión HTTP + redirect /main
-       └── Si inválido: Mostrar error (mismo mensaje que Swing)
-
-4. MainServlet.doGet()
-   ├── Verificar sesión válida
-   ├── Cargar datos de usuario
-   └── Mostrar main.jsp (dashboard)
-
-5. Logout
-   ├── Limpiar sesión HTTP
-   ├── Limpiar DatabaseConnection.currentUserEmail
-   └── Redirect login con mensaje "Sesión cerrada"
-```
-
-### 🎨 Fidelidad Visual Completa
-
-| Elemento LoginView | Implementación Web | Estado |
-|-------------------|-------------------|--------|
-| Header azul `(0,38,76)` | CSS `rgb(0, 38, 76)` | ✅ Idéntico |
-| Título "App administrativa" | Mismo texto y estilo | ✅ Idéntico |
-| Logo placeholder | Div con texto "LOGO UNIMINUTO" | ✅ Funcional |
-| Campo "Correo-e" | Input con label flotante | ✅ Idéntico |
-| Campo "Contraseña" | Input password con label | ✅ Idéntico |
-| Checkbox "Recordarme" | Funcionando con sesión extendida | ✅ Mejorado |
-| Checkbox "PC público" | Funcionando con sesión corta | ✅ Mejorado |
-| Botón "Iniciar Sesión" | Mismo color y estilo | ✅ Idéntico |
-| Botón "Registrarse" | Link a /signup | ✅ Funcional |
-| "¿Olvidó contraseña?" | Link placeholder | ✅ Funcional |
-| Footer UNIMINUTO | Mismo texto completo | ✅ Idéntico |
-| Validación error | Mismos mensajes de error | ✅ Idéntico |
-
-### 🔧 Testing y Validación
-
-#### Compilar y ejecutar:
-```bash
-cd "d:\UDC 2025 -1\CHAMBA\JAVA NUEVO\mi-proyecto-java"
-mvn clean compile
-mvn tomcat7:run
-```
-
-#### Acceder a la aplicación:
-- **Inicio**: http://localhost:8080
-- **Login directo**: http://localhost:8080/login
-- **Dashboard**: http://localhost:8080/main (requiere login)
-
-#### Funcionalidades testeable:
-1. ✅ **Login con credenciales válidas**: Redirige a dashboard
-2. ✅ **Login con credenciales inválidas**: Muestra error exacto
-3. ✅ **Recordarme activado**: Sesión de 7 días
-4. ✅ **PC público activado**: Sesión de 15 minutos
-5. ✅ **Logout**: Limpia sesión y muestra mensaje
-6. ✅ **Acceso sin login**: Redirige automáticamente a login
-
-### 📊 Estado de Migración
-
-| Componente | ✅ Fase 1 | ✅ Fase 2 | ⏳ Pendiente |
-|------------|-----------|-----------|-------------|
-| Estructura Maven | Completa | - | - |
-| Base de datos | Funcional | - | - |
-| Modelos | Migrados | Mejorados | - |
-| **Login** | - | **Completo** | - |
-| Vistas principales | - | Dashboard básico | MainView completo |
-| Formularios | - | - | Fase 3-4 |
-
-### 🎯 Siguientes Pasos (Fase 3)
-
-1. **Migrar MainView completo** - NavigationBar y menús
-2. **InfoPersonalServlet + JSP** - Formulario información personal
-3. **InfoAcademicaServlet + JSP** - Formulario información académica
-4. **Sistema de navegación** - Entre formularios
-
-### ⚠️ Notas Importantes Fase 2
-
-- **✅ Funcionalidad**: Login web 100% equivalente a LoginView.java
-- **✅ Base de datos**: Misma validación, sin cambios en BD
-- **✅ Sesiones**: Gestión HTTP profesional con timeouts
-- **✅ Seguridad**: Filtros UTF-8, validaciones preservadas
-- **✅ Diseño**: Visualmente idéntico al original Swing
-
-### 🔒 Compatibilidad y Seguridad
-
-- ✅ **Base de datos**: Sin cambios, usuarios existentes funcionan
-- ✅ **Validación**: Misma lógica de `db.validarUsuario()`
-- ✅ **Sesiones**: HTTP estándar con timeouts configurables
-- ✅ **Cross-browser**: Chrome, Firefox, Edge, Safari
-- ✅ **Responsive**: Funciona en móviles y tablets
-
----
-
-## 💡 **FASE 2 EXITOSA** 
-**El login web está completamente funcional. Los usuarios pueden autenticarse con las mismas credenciales que en la app desktop y acceder al dashboard principal.**
-
-**La transición es transparente - misma experiencia, mejor tecnología.**
-
-**¿Listo para continuar con la Fase 3 (Formularios de Información)?**                    # Documentación del proyecto.
-```
 
 ## Requisitos
 
