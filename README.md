@@ -24,49 +24,8 @@ mi-proyecto-java
 
 
 
-```
-mi-proyecto-java/
-├── pom.xml                              # ✅ Configuración Maven Web
-├── README.md                            # ✅ Documentación actualizada
-│
-├── src/main/
-│   ├── java/                           # Código Java
-│   │   ├── models/                     # ✅ PRESERVADO
-│   │   │   ├── Usuario.java           # Con constructor por defecto para web
-│   │   │   └── Estudiante.java        # Herencia preservada
-│   │   ├── utils/                      # ✅ PRESERVADO + MEJORADO  
-│   │   │   └── DatabaseConnection.java # + método obtenerUsuarioPorUsername()
-│   │   ├── servlets/                   # ✅ NUEVO - Lógica web
-│   │   │   ├── LoginServlet.java      # GET/POST para autenticación
-│   │   │   ├── MainServlet.java       # Dashboard principal
-│   │   │   └── LogoutServlet.java     # Cierre de sesión
-│   │   └── filters/                    # ✅ Configurado
-│   │       └── CharacterEncodingFilter.java # UTF-8
-│   │
-│   └── webapp/                         # Contenido web
-│       ├── index.jsp                   # ✅ Página de bienvenida
-│       └── WEB-INF/
-│           ├── web.xml                 # ✅ Servlets configurados
-│           └── views/
-│               ├── login.jsp           # ✅ NUEVO - Réplica exacta de LoginView
-│               ├── main.jsp            # ✅ NUEVO - Dashboard post-login
-│               └── error/              # ✅ Páginas de error
-│                   ├── 404.jsp
-│                   └── 500.jsp
-│
-└── src/ (original)                     # 🔄 Mantener durante transición
-    ├── Main.java                       # ⚠️  Será reemplazado en Fase 3
-    ├── models/                         # ✅ Migrado
-    ├── utils/                          # ✅ Migrado y mejorado
-    └── views/
-        ├── LoginView.java              # ✅ MIGRADO a login.jsp + LoginServlet
-        ├── MainView.java               # ⏳ Pendiente Fase 3
-        └── [otros views]               # ⏳ Pendientes Fases 3-5
-```
 
-### 🔄 Funcionalidades Web Implementadas
-
-#### ✅ **LoginServlet.java - Métodos GET y POST**
+#### **LoginServlet.java - Métodos GET y POST**
 ```java
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
