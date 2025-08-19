@@ -1,0 +1,453 @@
+===============================================================================
+                    DOCUMENTACIÓN TÉCNICA - SISTEMA DE ADMISIONES WEB
+                          
+                                 Versión 1.0.0
+===============================================================================
+
+1. PROPÓSITO Y DESCRIPCIÓN GENERAL
+===============================================================================
+
+El Sistema de Admisiones Web es una aplicación desarrollada para gestionar el 
+proceso de admisiones estudiantiles de la Universidad Uniminuto. Este sistema 
+permite a los aspirantes registrarse, completar su información personal y 
+académica, y radicar solicitudes de admisión a diferentes programas académicos.
+
+CARACTERÍSTICAS PRINCIPALES:
+- Gestión completa del proceso de admisiones estudiantiles
+- Interfaz web responsiva y moderna
+- Autenticación segura con JWT y sesiones HTTP
+- Almacenamiento de datos en MongoDB
+- API RESTful para comunicación frontend-backend
+- Soporte para múltiples tipos de documentos y modalidades de estudio
+
+MÓDULOS FUNCIONALES:
+- Autenticación y registro de usuarios
+- Gestión de información personal del aspirante
+- Gestión de información académica (nivel, sede, programa)
+- Radicación de solicitudes de admisión
+- Dashboard con resumen de información
+- Sistema de notificaciones por email
+
+2. ARQUITECTURA TÉCNICA
+===============================================================================
+
+2.1 ARQUITECTURA GENERAL
+------------------------
+El sistema implementa una arquitectura de tres capas:
+
+CAPA DE PRESENTACIÓN (Frontend):
+- Tecnología: React 19.1.0 + Vite 7.0.4
+- Lenguaje: JavaScript ES6+
+- Enrutamiento: React Router DOM 7.7.1
+- Comunicación HTTP: Axios 1.11.0
+- Servidor de desarrollo: Vite dev server (Puerto 5174)
+
+CAPA DE LÓGICA DE NEGOCIO (Backend):
+- Tecnología: Java Servlets + Apache Tomcat
+- Versión Java: OpenJDK 11
+- Servidor: Apache Tomcat 7 (Embedded)
+- Puerto: 8080
+- Gestor de dependencias: Apache Maven 3.x
+
+CAPA DE DATOS:
+- Base de datos principal: MongoDB 6.x o superior
+- Puerto MongoDB: 27017 (configuración estándar)
+- Base de datos: "admisiones"
+- Colecciones: info_personal, info_academica, solicitudes, usuarios
+
+2.2 TECNOLOGÍAS Y FRAMEWORKS UTILIZADOS
+---------------------------------------
+
+BACKEND (Java):
+- Java Development Kit (JDK): OpenJDK 11
+- Servidor de aplicaciones: Apache Tomcat 7
+- Framework web: Java Servlets API 4.0.1
+- Procesamiento JSON: Jackson 2.9.10
+- Autenticación: JWT (JSON Web Tokens) con jjwt 0.11.5
+- Driver base de datos: MongoDB Driver Sync 4.11.1
+- Logging: SLF4J 1.7.36
+- Testing: JUnit 5.10.2
+
+FRONTEND (JavaScript):
+- Framework JavaScript: React 19.1.0
+- Empaquetador: Vite 7.0.4
+- Enrutamiento: React Router DOM 7.7.1
+- Cliente HTTP: Axios 1.11.0
+- Linting: ESLint 9.30.1
+
+BASE DE DATOS:
+- Sistema gestor: MongoDB Community Server 6.x
+- Driver: MongoDB Java Driver Sync 4.11.1
+- Esquema: Orientado a documentos (NoSQL)
+
+HERRAMIENTAS DE DESARROLLO:
+- Control de versiones: Git
+- Gestor de dependencias Java: Apache Maven 3.x
+- Gestor de dependencias JavaScript: npm
+- IDE recomendado: Visual Studio Code
+
+2.3 ESTRUCTURA DEL PROYECTO
+---------------------------
+
+mi-proyecto-java/
+├── pom.xml                     # Configuración Maven
+├── DOCUMENTACION_SISTEMA.txt   # Este archivo
+├── README.md                   # Documentación básica
+├── src/                        # Código fuente Java
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── api/           # Servlets API RESTful
+│   │   │   │   ├── AuthApiServlet.java
+│   │   │   │   ├── InfoPersonalApiServlet.java
+│   │   │   │   ├── InfoAcademicaApiServlet.java
+│   │   │   │   └── SolicitudesApiServlet.java
+│   │   │   ├── models/        # Clases de dominio
+│   │   │   │   ├── Usuario.java
+│   │   │   │   └── Estudiante.java
+│   │   │   ├── utils/         # Utilidades
+│   │   │   │   └── DatabaseConnection.java
+│   │   │   └── filters/       # Filtros HTTP
+│   │   └── webapp/
+│   │       ├── WEB-INF/
+│   │       │   └── web.xml    # Configuración servlets
+│   │       └── index.jsp      # Página principal JSP
+├── frontend/                  # Aplicación React
+│   ├── package.json          # Dependencias Node.js
+│   ├── vite.config.js        # Configuración Vite
+│   ├── src/
+│   │   ├── components/       # Componentes reutilizables
+│   │   ├── pages/           # Páginas de la aplicación
+│   │   ├── services/        # Servicios API
+│   │   │   └── api.js       # Cliente HTTP principal
+│   │   └── utils/           # Utilidades React
+│   └── public/              # Archivos estáticos
+└── target/                  # Archivos compilados
+
+3. CONFIGURACIÓN DE BASE DE DATOS
+===============================================================================
+
+3.1 ESQUEMA DE DATOS MONGODB
+----------------------------
+
+COLECCIÓN: usuarios
+Campos:
+- email (String): Email único del usuario
+- password (String): Contraseña hasheada
+- nombres (String): Nombres del usuario
+- apellidos (String): Apellidos del usuario
+- tipoDocumento (String): Tipo de documento (CC, TI, CE, etc.)
+- numeroDocumento (String): Número de documento
+- telefono (String): Número telefónico
+- fechaRegistro (Date): Fecha de registro
+
+COLECCIÓN: info_personal
+Campos:
+- email (String): Email del usuario (clave foránea)
+- nombres (String): Nombres completos
+- apellidos (String): Apellidos completos
+- tipo_documento (String): Tipo de documento
+- numero_documento (String): Número de documento
+- fecha_nacimiento (Date): Fecha de nacimiento
+- lugar_nacimiento (String): Lugar de nacimiento
+- genero (String): Género
+- estado_civil (String): Estado civil
+- direccion (String): Dirección de residencia
+- telefono (String): Número telefónico
+- email_alternativo (String): Email alternativo
+- estrato_socioeconomico (String): Estrato socioeconómico
+
+COLECCIÓN: info_academica
+Campos:
+- email (String): Email del usuario (clave foránea)
+- nivel (String): Nivel académico (pregrado/posgrado)
+- sede (String): Sede de interés
+- grado_academico (String): Grado académico actual
+- periodo_admision (String): Periodo de admisión
+- metodologia (String): Metodología (presencial/virtual)
+- jornada (String): Jornada de estudio
+- plan_decision (String): Plan de decisión
+- grado_seleccionado (String): Grado seleccionado
+- pais (String): País
+- grado_obtenido (String): Grado obtenido previamente
+- fecha_graduacion (Date): Fecha de graduación
+
+COLECCIÓN: solicitudes
+Campos:
+- email (String): Email del usuario (clave foránea)
+- numero_radicado (String): Número único de radicado
+- tipo_solicitud (String): Tipo de solicitud
+- telefono_contacto (String): Teléfono de contacto
+- email_notificacion (String): Email para notificaciones
+- estado (String): Estado de la solicitud
+- fecha_radicacion (Date): Fecha de radicación
+
+4. INSTALACIÓN Y CONFIGURACIÓN
+===============================================================================
+
+4.1 REQUISITOS DEL SISTEMA
+--------------------------
+
+SOFTWARE REQUERIDO:
+- Sistema operativo: Windows 10/11, macOS, o Linux (Ubuntu 18.04+)
+- Java Development Kit (JDK): OpenJDK 11 o superior
+- Apache Maven: 3.6.3 o superior
+- Node.js: 18.x o superior
+- npm: 8.x o superior
+- MongoDB Community Server: 6.0 o superior
+- Git: Para control de versiones
+
+RECURSOS DE HARDWARE MÍNIMOS:
+- RAM: 8 GB (recomendado 16 GB)
+- Procesador: Dual-core 2.5 GHz
+- Almacenamiento: 10 GB libres
+- Conexión a Internet: Para descargar dependencias
+
+4.2 INSTALACIÓN DE DEPENDENCIAS
+-------------------------------
+
+PASO 1: INSTALACIÓN DE JAVA JDK 11
+1. Descargar OpenJDK 11 desde https://adoptium.net/
+2. Instalar siguiendo las instrucciones del sistema operativo
+3. Verificar instalación:
+   java -version
+   javac -version
+
+PASO 2: INSTALACIÓN DE APACHE MAVEN
+1. Descargar Maven desde https://maven.apache.org/download.cgi
+2. Extraer en directorio del sistema (ej: C:\apache-maven-3.9.0)
+3. Agregar al PATH del sistema
+4. Verificar instalación:
+   mvn -version
+
+PASO 3: INSTALACIÓN DE NODE.JS
+1. Descargar Node.js LTS desde https://nodejs.org/
+2. Instalar con las opciones predeterminadas
+3. Verificar instalación:
+   node --version
+   npm --version
+
+PASO 4: INSTALACIÓN DE MONGODB
+1. Descargar MongoDB Community Server desde https://www.mongodb.com/download-center/community
+2. Instalar con configuración predeterminada
+3. Iniciar el servicio MongoDB:
+   Windows: Automático después de instalación
+   Linux: sudo systemctl start mongod
+   macOS: brew services start mongodb-community
+4. Verificar funcionamiento:
+   mongo --version
+
+PASO 5: CONFIGURACIÓN DE BASE DE DATOS
+1. Conectar a MongoDB:
+   mongo
+2. Crear base de datos:
+   use admisiones
+3. Crear un usuario de prueba (opcional):
+   db.usuarios.insertOne({
+     email: "admin@udc.edu.co",
+     nombres: "Administrador",
+     apellidos: "Sistema",
+     password: "hash_password_here"
+   })
+
+4.3 CONFIGURACIÓN DEL PROYECTO
+------------------------------
+
+PASO 1: CLONAR EL REPOSITORIO
+git clone [URL_REPOSITORIO]
+cd mi-proyecto-java
+
+PASO 2: CONFIGURAR VARIABLES DE ENTORNO
+Crear archivo .env en la raíz del proyecto con:
+DB_BACKEND=mongo
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB=admisiones
+JWT_SECRET=tu_clave_secreta_jwt_aqui
+
+PASO 3: INSTALAR DEPENDENCIAS JAVA
+mvn clean install
+
+PASO 4: INSTALAR DEPENDENCIAS JAVASCRIPT
+cd frontend
+npm install
+cd ..
+
+5. EJECUCIÓN DEL SISTEMA
+===============================================================================
+
+5.1 EJECUCIÓN EN ENTORNO DE DESARROLLO
+--------------------------------------
+
+TERMINAL 1 - BACKEND (Java):
+1. Abrir terminal en la raíz del proyecto
+2. Configurar variables de entorno:
+   Windows PowerShell:
+   $env:DB_BACKEND="mongo"
+   $env:MONGODB_URI="mongodb://localhost:27017"
+   $env:MONGODB_DB="admisiones"
+   
+   Windows CMD:
+   set DB_BACKEND=mongo
+   set MONGODB_URI=mongodb://localhost:27017
+   set MONGODB_DB=admisiones
+   
+   Linux/macOS:
+   export DB_BACKEND=mongo
+   export MONGODB_URI=mongodb://localhost:27017
+   export MONGODB_DB=admisiones
+
+3. Ejecutar servidor backend:
+   mvn tomcat7:run
+
+4. Verificar que el servidor esté ejecutándose:
+   - URL: http://localhost:8080
+   - Log esperado: "Starting ProtocolHandler [http-bio-8080]"
+
+TERMINAL 2 - FRONTEND (React):
+1. Abrir nueva terminal
+2. Navegar a directorio frontend:
+   cd frontend
+3. Ejecutar servidor de desarrollo:
+   npm run dev
+4. Verificar que el servidor esté ejecutándose:
+   - URL: http://localhost:5174
+   - Log esperado: "VITE v7.0.x ready in xxx ms"
+
+5.2 ACCESO AL SISTEMA
+--------------------
+
+1. Abrir navegador web
+2. Navegar a: http://localhost:5174
+3. Crear cuenta nueva o iniciar sesión
+4. El sistema estará disponible con todas las funcionalidades
+
+5.3 PUERTOS UTILIZADOS
+----------------------
+- Frontend (React/Vite): Puerto 5174
+- Backend (Java/Tomcat): Puerto 8080
+- Base de datos (MongoDB): Puerto 27017
+
+Asegurarse de que estos puertos estén libres antes de ejecutar el sistema.
+
+6. FUNCIONALIDADES DEL SISTEMA
+===============================================================================
+
+6.1 MÓDULO DE AUTENTICACIÓN
+---------------------------
+- Registro de nuevos usuarios
+- Inicio de sesión con email y contraseña
+- Autenticación mediante JWT
+- Manejo de sesiones HTTP
+- Cierre de sesión seguro
+- Recuperación de contraseñas (funcionalidad futura)
+
+6.2 MÓDULO DE INFORMACIÓN PERSONAL
+---------------------------------
+- Captura de datos personales del aspirante
+- Validación de documentos de identidad
+- Gestión de información de contacto
+- Actualización de datos personales
+- Persistencia en MongoDB
+
+6.3 MÓDULO DE INFORMACIÓN ACADÉMICA
+----------------------------------
+- Registro de historial académico
+- Selección de programa y sede de interés
+- Configuración de modalidad de estudio
+- Validación de requisitos académicos
+- Almacenamiento de documentación académica
+
+6.4 MÓDULO DE SOLICITUDES
+-------------------------
+- Radicación de solicitudes de admisión
+- Generación automática de número de radicado
+- Seguimiento del estado de solicitudes
+- Notificaciones por email
+- Historial de solicitudes
+
+6.5 DASHBOARD Y RESUMEN
+----------------------
+- Vista consolidada de información del aspirante
+- Resumen de solicitudes activas
+- Indicadores de completitud de información
+- Enlaces rápidos a módulos principales
+
+7. SOLUCIÓN DE PROBLEMAS COMUNES
+===============================================================================
+
+7.1 ERRORES DE CONEXIÓN A BASE DE DATOS
+---------------------------------------
+SÍNTOMA: "Error connecting to MongoDB"
+SOLUCIÓN:
+1. Verificar que MongoDB esté ejecutándose:
+   Windows: Services → MongoDB Server
+   Linux: sudo systemctl status mongod
+2. Verificar puerto 27017 disponible:
+   netstat -an | findstr 27017
+3. Revisar configuración de URI en variables de entorno
+
+7.2 CONFLICTOS DE PUERTOS
+-------------------------
+SÍNTOMA: "Port 8080 already in use"
+SOLUCIÓN:
+1. Identificar proceso usando el puerto:
+   Windows: netstat -ano | findstr :8080
+   Linux: lsof -i :8080
+2. Terminar proceso conflictivo:
+   Windows: taskkill /PID [PID_NUMBER] /F
+   Linux: kill -9 [PID_NUMBER]
+
+7.3 ERRORES DE COMPILACIÓN JAVA
+-------------------------------
+SÍNTOMA: "Could not find or load main class"
+SOLUCIÓN:
+1. Verificar JAVA_HOME:
+   echo $JAVA_HOME (Linux/macOS)
+   echo %JAVA_HOME% (Windows)
+2. Limpiar y recompilar:
+   mvn clean compile
+
+7.4 ERRORES DE DEPENDENCIAS NPM
+-------------------------------
+SÍNTOMA: "Module not found"
+SOLUCIÓN:
+1. Limpiar caché de npm:
+   npm cache clean --force
+2. Eliminar node_modules y reinstalar:
+   rm -rf node_modules (Linux/macOS)
+   rmdir /s node_modules (Windows)
+   npm install
+
+8. MANTENIMIENTO Y ACTUALIZACIONES
+===============================================================================
+
+8.1 RESPALDO DE DATOS
+--------------------
+Para respaldar la base de datos MongoDB:
+mongodump --db admisiones --out backup_[fecha]
+
+Para restaurar:
+mongorestore --db admisiones backup_[fecha]/admisiones/
+
+8.2 MONITOREO DEL SISTEMA
+-------------------------
+- Revisar logs de Tomcat en target/tomcat/logs/
+- Monitorear uso de memoria y CPU
+- Verificar conexiones activas a MongoDB
+- Revisar logs de aplicación en consola
+
+8.3 ACTUALIZACIONES DE SEGURIDAD
+--------------------------------
+- Mantener actualizado Java JDK
+- Actualizar dependencias Maven regularmente:
+  mvn versions:display-dependency-updates
+- Actualizar dependencias npm:
+  npm audit fix
+- Rotar claves JWT periódicamente
+
+
+
+===============================================================================
+                        FIN DE DOCUMENTACIÓN TÉCNICA
+                              Versión 1.0.0
+                           Fecha: 16 de Agosto, 2025
+===============================================================================

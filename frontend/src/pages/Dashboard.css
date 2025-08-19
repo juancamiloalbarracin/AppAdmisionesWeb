@@ -1,0 +1,34 @@
+.dashboard-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 20px;
+}
+
+.dashboard-card {
+	background: #fff;
+	border: 2px solid #00264C;
+	border-radius: 6px;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	text-decoration: none;
+	color: inherit;
+}
+
+.dashboard-card .card-icon {
+	font-size: 28px;
+}
+
+.dashboard-card .card-content h3 {
+	color: #00264C;
+	margin-bottom: 6px;
+}
+
+/* Resumen styles */
+.resumen-section { margin: 20px 0; }
+.resumen-card { background: #fff; border: 2px solid #00264C; border-radius: 6px; padding: 16px; }
+.resumen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.resumen-table { display: grid; gap: 6px; }
+.resumen-thead, .resumen-row { display: grid; grid-template-columns: 1.2fr 1fr 2fr 1.2fr 0.8fr; gap: 8px; align-items: center; }
+.resumen-thead { font-weight: bold; color: #00264C; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; }

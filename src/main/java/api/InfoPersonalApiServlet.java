@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import utils.DatabaseConnection;
+import repository.RepositoryFactory;
+import repository.InfoPersonalRepository;
 
 /**
  * InfoPersonalApiServlet - API REST PROPIA para información personal
@@ -37,10 +38,10 @@ public class InfoPersonalApiServlet extends HttpServlet {
             return;
         }
         
-        if ("/get".equals(pathInfo) || pathInfo == null) {
+        if ("/get".equals(pathInfo) || pathInfo == null || "".equals(pathInfo) || "/".equals(pathInfo)) {
             handleGetInfoPersonal(request, response);
         } else {
-            sendErrorResponse(response, 404, "Endpoint no encontrado");
+            sendErrorResponse(response, 404, "Endpoint no encontrado: " + pathInfo);
         }
     }
     
@@ -61,7 +62,7 @@ public class InfoPersonalApiServlet extends HttpServlet {
         if ("/save".equals(pathInfo)) {
             handleSaveInfoPersonal(request, response);
         } else {
-            sendErrorResponse(response, 404, "Endpoint no encontrado");
+            sendErrorResponse(response, 404, "Endpoint no encontrado: " + pathInfo);
         }
     }
 
@@ -74,10 +75,10 @@ public class InfoPersonalApiServlet extends HttpServlet {
         
         try {
             String userEmail = (String) request.getSession().getAttribute("userEmail");
+            System.out.println("[InfoPersonal/Get] userEmail=" + userEmail);
             
-            DatabaseConnection db = new DatabaseConnection();
-            Map<String, String> infoPersonal = db.obtenerInformacionPersonal(userEmail);
-            db.closeConnection();
+            InfoPersonalRepository repo = RepositoryFactory.getInfoPersonalRepository();
+            Map<String, String> infoPersonal = repo.getByEmail(userEmail);
             
             Map<String, Object> responseData = new HashMap<>();
             
@@ -90,6 +91,7 @@ public class InfoPersonalApiServlet extends HttpServlet {
                 responseData.put("data", new HashMap<>());
                 responseData.put("message", "No se encontró información personal registrada");
             }
+            responseData.put("queriedEmail", userEmail);
             
             response.setStatus(200);
             response.getWriter().write(objectMapper.writeValueAsString(responseData));
@@ -119,23 +121,21 @@ public class InfoPersonalApiServlet extends HttpServlet {
             }
             
             // PRESERVADO: Misma lógica de guardado que InfoPersonalServlet
-            DatabaseConnection db = new DatabaseConnection();
-            boolean success = db.guardarInformacionPersonal(
-                userEmail,
-                infoReq.getNombres(),
-                infoReq.getApellidos(),
-                infoReq.getFechaNacimiento(),
-                infoReq.getLugarNacimiento(),
-                infoReq.getTipoDocumento(),
-                infoReq.getNumeroDocumento(),
-                infoReq.getGenero(),
-                infoReq.getEstadoCivil(),
-                infoReq.getDireccion(),
-                infoReq.getTelefono(),
-                infoReq.getCelular(),
-                infoReq.getEmailPersonal()
-            );
-            db.closeConnection();
+            InfoPersonalRepository repo = RepositoryFactory.getInfoPersonalRepository();
+            java.util.Map<String, String> payload = new java.util.HashMap<>();
+            payload.put("nombres", infoReq.getNombres());
+            payload.put("apellidos", infoReq.getApellidos());
+            payload.put("fechaNacimiento", infoReq.getFechaNacimiento());
+            payload.put("lugarNacimiento", infoReq.getLugarNacimiento());
+            payload.put("tipoDocumento", infoReq.getTipoDocumento());
+            payload.put("numeroDocumento", infoReq.getNumeroDocumento());
+            payload.put("genero", infoReq.getGenero());
+            payload.put("estadoCivil", infoReq.getEstadoCivil());
+            payload.put("direccion", infoReq.getDireccion());
+            payload.put("telefono", infoReq.getTelefono());
+            payload.put("celular", infoReq.getCelular());
+            payload.put("emailPersonal", infoReq.getEmailPersonal());
+            boolean success = repo.saveFromApi(userEmail, payload);
             
             Map<String, Object> responseData = new HashMap<>();
             if (success) {

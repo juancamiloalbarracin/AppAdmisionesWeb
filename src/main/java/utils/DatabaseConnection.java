@@ -548,18 +548,30 @@ public class DatabaseConnection {
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {
-                info.put("nombres", rs.getString("nombres"));
+                info.put("primerNombre", rs.getString("primer_nombre"));
+                info.put("segundoNombre", rs.getString("segundo_nombre"));
                 info.put("apellidos", rs.getString("apellidos"));
-                info.put("fechaNacimiento", rs.getString("fecha_nacimiento"));
-                info.put("lugarNacimiento", rs.getString("lugar_nacimiento"));
+                info.put("sexoBiologico", rs.getString("sexo_biologico"));
+                info.put("grupoSanguineo", rs.getString("grupo_sanguineo"));
                 info.put("tipoDocumento", rs.getString("tipo_documento"));
                 info.put("numeroDocumento", rs.getString("numero_documento"));
-                info.put("genero", rs.getString("genero"));
-                info.put("estadoCivil", rs.getString("estado_civil"));
+                info.put("fechaExpedicionDocumento", rs.getString("fecha_expedicion_documento"));
+                info.put("paisNacimiento", rs.getString("pais_nacimiento"));
+                info.put("ciudadNacimiento", rs.getString("ciudad_nacimiento"));
+                info.put("fechaNacimiento", rs.getString("fecha_nacimiento"));
+                info.put("telefonoCelular", rs.getString("telefono_celular"));
+                info.put("correoElectronico", rs.getString("correo_electronico"));
+                info.put("tipoDireccion", rs.getString("tipo_direccion"));
                 info.put("direccion", rs.getString("direccion"));
-                info.put("telefono", rs.getString("telefono"));
-                info.put("celular", rs.getString("celular"));
-                info.put("emailPersonal", rs.getString("email_personal"));
+                info.put("casaAptoBarrio", rs.getString("casa_apto_barrio"));
+                info.put("tieneSisben", rs.getString("tiene_sisben"));
+                info.put("tieneEps", rs.getString("tiene_eps"));
+                info.put("tieneDiscapacidad", rs.getString("tiene_discapacidad"));
+                info.put("primerNombreAcudiente", rs.getString("primer_nombre_acudiente"));
+                info.put("segundoNombreAcudiente", rs.getString("segundo_nombre_acudiente"));
+                info.put("apellidosAcudiente", rs.getString("apellidos_acudiente"));
+                info.put("telefonoAcudiente", rs.getString("telefono_acudiente"));
+                info.put("correoAcudiente", rs.getString("correo_acudiente"));
             }
             
         } catch (SQLException e) {
@@ -589,17 +601,23 @@ public class DatabaseConnection {
             
             String sql;
             if (rs.next()) {
-                // Actualizar
-                sql = "UPDATE informacion_personal SET nombres=?, apellidos=?, fecha_nacimiento=?, " +
-                      "lugar_nacimiento=?, tipo_documento=?, numero_documento=?, genero=?, " +
-                      "estado_civil=?, direccion=?, telefono=?, celular=?, email_personal=? " +
-                      "WHERE email=?";
+                // Actualizar - usando las columnas reales de la DB
+                sql = "UPDATE informacion_personal SET primer_nombre=?, segundo_nombre=?, apellidos=?, " +
+                      "sexo_biologico=?, grupo_sanguineo=?, tipo_documento=?, numero_documento=?, " +
+                      "fecha_expedicion_documento=?, pais_nacimiento=?, ciudad_nacimiento=?, " +
+                      "fecha_nacimiento=?, telefono_celular=?, correo_electronico=?, tipo_direccion=?, " +
+                      "direccion=?, casa_apto_barrio=?, tiene_sisben=?, tiene_eps=?, tiene_discapacidad=?, " +
+                      "primer_nombre_acudiente=?, segundo_nombre_acudiente=?, apellidos_acudiente=?, " +
+                      "telefono_acudiente=?, correo_acudiente=? WHERE email=?";
             } else {
-                // Insertar
-                sql = "INSERT INTO informacion_personal (nombres, apellidos, fecha_nacimiento, " +
-                      "lugar_nacimiento, tipo_documento, numero_documento, genero, estado_civil, " +
-                      "direccion, telefono, celular, email_personal, email) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                // Insertar - usando las columnas reales de la DB
+                sql = "INSERT INTO informacion_personal (primer_nombre, segundo_nombre, apellidos, " +
+                      "sexo_biologico, grupo_sanguineo, tipo_documento, numero_documento, " +
+                      "fecha_expedicion_documento, pais_nacimiento, ciudad_nacimiento, fecha_nacimiento, " +
+                      "telefono_celular, correo_electronico, tipo_direccion, direccion, casa_apto_barrio, " +
+                      "tiene_sisben, tiene_eps, tiene_discapacidad, primer_nombre_acudiente, " +
+                      "segundo_nombre_acudiente, apellidos_acudiente, telefono_acudiente, correo_acudiente, email) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             }
             
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -641,16 +659,17 @@ public class DatabaseConnection {
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {
-                info.put("institucionBachillerato", rs.getString("institucion_bachillerato"));
-                info.put("anioBachillerato", rs.getString("anio_bachillerato"));
-                info.put("promedioAcademico", rs.getString("promedio_academico"));
-                info.put("tipoInstitucion", rs.getString("tipo_institucion"));
-                info.put("modalidadEstudio", rs.getString("modalidad_estudio"));
-                info.put("enfasisArea", rs.getString("enfasis_area"));
-                info.put("pruebasEstado", rs.getString("pruebas_estado"));
-                info.put("puntajePruebas", rs.getString("puntaje_pruebas"));
-                info.put("experienciaLaboral", rs.getString("experiencia_laboral"));
-                info.put("certificacionesAdicionales", rs.getString("certificaciones_adicionales"));
+                info.put("nivel", rs.getString("nivel"));
+                info.put("sede", rs.getString("sede"));
+                info.put("gradoAcademico", rs.getString("grado_academico"));
+                info.put("periodoAdmision", rs.getString("periodo_admision"));
+                info.put("metodologia", rs.getString("metodologia"));
+                info.put("jornada", rs.getString("jornada"));
+                info.put("planDecision", rs.getString("plan_decision"));
+                info.put("gradoSeleccionado", rs.getString("grado_seleccionado"));
+                info.put("pais", rs.getString("pais"));
+                info.put("gradoObtenido", rs.getString("grado_obtenido"));
+                info.put("fechaGraduacion", rs.getString("fecha_graduacion"));
             }
             
         } catch (SQLException e) {
@@ -662,12 +681,12 @@ public class DatabaseConnection {
     }
     
     /**
-     * Guardar información académica del usuario para API
+     * Guardar información académica del usuario para API - ACTUALIZADO para columnas reales
      */
-    public boolean guardarInformacionAcademica(String email, String institucionBachillerato, 
-            String anioBachillerato, String promedioAcademico, String tipoInstitucion, 
-            String modalidadEstudio, String enfasisArea, String pruebasEstado, 
-            String puntajePruebas, String experienciaLaboral, String certificacionesAdicionales) {
+    public boolean guardarInformacionAcademica(String email, String nivel, String sede, 
+            String gradoAcademico, String periodoAdmision, String metodologia, String jornada, 
+            String planDecision, String gradoSeleccionado, String pais, String gradoObtenido, 
+            String fechaGraduacion) {
         
         try {
             ensureUserExists(email);
@@ -680,31 +699,31 @@ public class DatabaseConnection {
             
             String sql;
             if (rs.next()) {
-                // Actualizar
-                sql = "UPDATE informacion_academica SET institucion_bachillerato=?, anio_bachillerato=?, " +
-                      "promedio_academico=?, tipo_institucion=?, modalidad_estudio=?, enfasis_area=?, " +
-                      "pruebas_estado=?, puntaje_pruebas=?, experiencia_laboral=?, " +
-                      "certificaciones_adicionales=? WHERE email=?";
+                // Actualizar - usando columnas reales
+                sql = "UPDATE informacion_academica SET nivel=?, sede=?, grado_academico=?, " +
+                      "periodo_admision=?, metodologia=?, jornada=?, plan_decision=?, " +
+                      "grado_seleccionado=?, pais=?, grado_obtenido=?, fecha_graduacion=? WHERE email=?";
             } else {
-                // Insertar
-                sql = "INSERT INTO informacion_academica (institucion_bachillerato, anio_bachillerato, " +
-                      "promedio_academico, tipo_institucion, modalidad_estudio, enfasis_area, " +
-                      "pruebas_estado, puntaje_pruebas, experiencia_laboral, certificaciones_adicionales, email) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                // Insertar - usando columnas reales
+                sql = "INSERT INTO informacion_academica (nivel, sede, grado_academico, " +
+                      "periodo_admision, metodologia, jornada, plan_decision, grado_seleccionado, " +
+                      "pais, grado_obtenido, fecha_graduacion, email) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             }
             
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, institucionBachillerato);
-            ps.setString(2, anioBachillerato);
-            ps.setString(3, promedioAcademico);
-            ps.setString(4, tipoInstitucion);
-            ps.setString(5, modalidadEstudio);
-            ps.setString(6, enfasisArea);
-            ps.setString(7, pruebasEstado);
-            ps.setString(8, puntajePruebas);
-            ps.setString(9, experienciaLaboral);
-            ps.setString(10, certificacionesAdicionales);
-            ps.setString(11, email);
+            ps.setString(1, nivel);
+            ps.setString(2, sede);
+            ps.setString(3, gradoAcademico);
+            ps.setString(4, periodoAdmision);
+            ps.setString(5, metodologia);
+            ps.setString(6, jornada);
+            ps.setString(7, planDecision);
+            ps.setString(8, gradoSeleccionado);
+            ps.setString(9, pais);
+            ps.setString(10, gradoObtenido);
+            ps.setString(11, fechaGraduacion);
+            ps.setString(12, email);
             
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;

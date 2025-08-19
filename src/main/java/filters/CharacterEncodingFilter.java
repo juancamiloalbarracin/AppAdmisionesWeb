@@ -21,7 +21,12 @@ public class CharacterEncodingFilter implements Filter {
         // Configurar encoding para request y response
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
+        
+        // Solo establecer content type para HTML, no para JSON
+        String requestURI = ((javax.servlet.http.HttpServletRequest) request).getRequestURI();
+        if (!requestURI.startsWith("/api/")) {
+            response.setContentType("text/html; charset=UTF-8");
+        }
         
         // Continuar con la cadena de filtros
         chain.doFilter(request, response);

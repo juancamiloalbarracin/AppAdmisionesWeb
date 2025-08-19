@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import utils.DatabaseConnection;
+import repository.RepositoryFactory;
+import repository.InfoAcademicaRepository;
 
 /**
  * InfoAcademicaApiServlet - API REST PROPIA para información académica
@@ -37,10 +38,10 @@ public class InfoAcademicaApiServlet extends HttpServlet {
             return;
         }
         
-        if ("/get".equals(pathInfo) || pathInfo == null) {
+        if ("/get".equals(pathInfo) || pathInfo == null || "".equals(pathInfo) || "/".equals(pathInfo)) {
             handleGetInfoAcademica(request, response);
         } else {
-            sendErrorResponse(response, 404, "Endpoint no encontrado");
+            sendErrorResponse(response, 404, "Endpoint no encontrado: " + pathInfo);
         }
     }
     
@@ -61,7 +62,7 @@ public class InfoAcademicaApiServlet extends HttpServlet {
         if ("/save".equals(pathInfo)) {
             handleSaveInfoAcademica(request, response);
         } else {
-            sendErrorResponse(response, 404, "Endpoint no encontrado");
+            sendErrorResponse(response, 404, "Endpoint no encontrado: " + pathInfo);
         }
     }
 
@@ -74,10 +75,10 @@ public class InfoAcademicaApiServlet extends HttpServlet {
         
         try {
             String userEmail = (String) request.getSession().getAttribute("userEmail");
+            System.out.println("[InfoAcademica/Get] userEmail=" + userEmail);
             
-            DatabaseConnection db = new DatabaseConnection();
-            Map<String, String> infoAcademica = db.obtenerInformacionAcademica(userEmail);
-            db.closeConnection();
+            InfoAcademicaRepository repo = RepositoryFactory.getInfoAcademicaRepository();
+            Map<String, String> infoAcademica = repo.getByEmail(userEmail);
             
             Map<String, Object> responseData = new HashMap<>();
             
@@ -90,6 +91,7 @@ public class InfoAcademicaApiServlet extends HttpServlet {
                 responseData.put("data", new HashMap<>());
                 responseData.put("message", "No se encontró información académica registrada");
             }
+            responseData.put("queriedEmail", userEmail);
             
             response.setStatus(200);
             response.getWriter().write(objectMapper.writeValueAsString(responseData));
@@ -119,21 +121,20 @@ public class InfoAcademicaApiServlet extends HttpServlet {
             }
             
             // PRESERVADO: Misma lógica de guardado que InfoAcademicaServlet
-            DatabaseConnection db = new DatabaseConnection();
-            boolean success = db.guardarInformacionAcademica(
-                userEmail,
-                infoReq.getInstitucionBachillerato(),
-                infoReq.getAnioBachillerato(),
-                infoReq.getPromedioAcademico(),
-                infoReq.getTipoInstitucion(),
-                infoReq.getModalidadEstudio(),
-                infoReq.getEnfasisArea(),
-                infoReq.getPruebasEstado(),
-                infoReq.getPuntajePruebas(),
-                infoReq.getExperienciaLaboral(),
-                infoReq.getCertificacionesAdicionales()
-            );
-            db.closeConnection();
+            InfoAcademicaRepository repo = RepositoryFactory.getInfoAcademicaRepository();
+            java.util.Map<String, String> payload = new java.util.HashMap<>();
+            payload.put("nivel", infoReq.getNivel());
+            payload.put("sede", infoReq.getSede());
+            payload.put("gradoAcademico", infoReq.getGradoAcademico());
+            payload.put("periodoAdmision", infoReq.getPeriodoAdmision());
+            payload.put("metodologia", infoReq.getMetodologia());
+            payload.put("jornada", infoReq.getJornada());
+            payload.put("planDecision", infoReq.getPlanDecision());
+            payload.put("gradoSeleccionado", infoReq.getGradoSeleccionado());
+            payload.put("pais", infoReq.getPais());
+            payload.put("gradoObtenido", infoReq.getGradoObtenido());
+            payload.put("fechaGraduacion", infoReq.getFechaGraduacion());
+            boolean success = repo.saveFromApi(userEmail, payload);
             
             Map<String, Object> responseData = new HashMap<>();
             if (success) {
@@ -156,20 +157,23 @@ public class InfoAcademicaApiServlet extends HttpServlet {
      * PRESERVADO: Validaciones originales del InfoAcademicaServlet
      */
     private String validateInfoAcademica(InfoAcademicaRequest info) {
-        if (isEmpty(info.getInstitucionBachillerato())) {
-            return "La institución de bachillerato es obligatoria.";
+        if (isEmpty(info.getNivel())) {
+            return "El nivel es obligatorio.";
         }
-        if (isEmpty(info.getAnioBachillerato())) {
-            return "El año de bachillerato es obligatorio.";
+        if (isEmpty(info.getGradoAcademico()) || "Seleccione...".equals(info.getGradoAcademico())) {
+            return "Debe seleccionar un grado académico.";
         }
-        if (isEmpty(info.getPromedioAcademico())) {
-            return "El promedio académico es obligatorio.";
+        if (isEmpty(info.getJornada()) || "Seleccione...".equals(info.getJornada())) {
+            return "Debe seleccionar una jornada.";
         }
-        if (isEmpty(info.getTipoInstitucion()) || "Seleccione...".equals(info.getTipoInstitucion())) {
-            return "Debe seleccionar el tipo de institución.";
+        if (isEmpty(info.getPlanDecision()) || "Seleccione...".equals(info.getPlanDecision())) {
+            return "Debe seleccionar un plan de decisión.";
         }
-        if (isEmpty(info.getModalidadEstudio()) || "Seleccione...".equals(info.getModalidadEstudio())) {
-            return "Debe seleccionar la modalidad de estudio.";
+        if (isEmpty(info.getPais())) {
+            return "El país es obligatorio.";
+        }
+        if (isEmpty(info.getGradoObtenido())) {
+            return "El grado obtenido es obligatorio.";
         }
         
         return null; // Sin errores
@@ -195,37 +199,40 @@ public class InfoAcademicaApiServlet extends HttpServlet {
     
     // Clase interna para deserializar JSON
     public static class InfoAcademicaRequest {
-        private String institucionBachillerato;
-        private String anioBachillerato;
-        private String promedioAcademico;
-        private String tipoInstitucion;
-        private String modalidadEstudio;
-        private String enfasisArea;
-        private String pruebasEstado;
-        private String puntajePruebas;
-        private String experienciaLaboral;
-        private String certificacionesAdicionales;
+        private String nivel;
+        private String sede;
+        private String gradoAcademico;
+        private String periodoAdmision;
+        private String metodologia;
+        private String jornada;
+        private String planDecision;
+        private String gradoSeleccionado;
+        private String pais;
+        private String gradoObtenido;
+        private String fechaGraduacion;
         
         // Getters y setters
-        public String getInstitucionBachillerato() { return institucionBachillerato; }
-        public void setInstitucionBachillerato(String institucionBachillerato) { this.institucionBachillerato = institucionBachillerato; }
-        public String getAnioBachillerato() { return anioBachillerato; }
-        public void setAnioBachillerato(String anioBachillerato) { this.anioBachillerato = anioBachillerato; }
-        public String getPromedioAcademico() { return promedioAcademico; }
-        public void setPromedioAcademico(String promedioAcademico) { this.promedioAcademico = promedioAcademico; }
-        public String getTipoInstitucion() { return tipoInstitucion; }
-        public void setTipoInstitucion(String tipoInstitucion) { this.tipoInstitucion = tipoInstitucion; }
-        public String getModalidadEstudio() { return modalidadEstudio; }
-        public void setModalidadEstudio(String modalidadEstudio) { this.modalidadEstudio = modalidadEstudio; }
-        public String getEnfasisArea() { return enfasisArea; }
-        public void setEnfasisArea(String enfasisArea) { this.enfasisArea = enfasisArea; }
-        public String getPruebasEstado() { return pruebasEstado; }
-        public void setPruebasEstado(String pruebasEstado) { this.pruebasEstado = pruebasEstado; }
-        public String getPuntajePruebas() { return puntajePruebas; }
-        public void setPuntajePruebas(String puntajePruebas) { this.puntajePruebas = puntajePruebas; }
-        public String getExperienciaLaboral() { return experienciaLaboral; }
-        public void setExperienciaLaboral(String experienciaLaboral) { this.experienciaLaboral = experienciaLaboral; }
-        public String getCertificacionesAdicionales() { return certificacionesAdicionales; }
-        public void setCertificacionesAdicionales(String certificacionesAdicionales) { this.certificacionesAdicionales = certificacionesAdicionales; }
+        public String getNivel() { return nivel; }
+        public void setNivel(String nivel) { this.nivel = nivel; }
+        public String getSede() { return sede; }
+        public void setSede(String sede) { this.sede = sede; }
+        public String getGradoAcademico() { return gradoAcademico; }
+        public void setGradoAcademico(String gradoAcademico) { this.gradoAcademico = gradoAcademico; }
+        public String getPeriodoAdmision() { return periodoAdmision; }
+        public void setPeriodoAdmision(String periodoAdmision) { this.periodoAdmision = periodoAdmision; }
+        public String getMetodologia() { return metodologia; }
+        public void setMetodologia(String metodologia) { this.metodologia = metodologia; }
+        public String getJornada() { return jornada; }
+        public void setJornada(String jornada) { this.jornada = jornada; }
+        public String getPlanDecision() { return planDecision; }
+        public void setPlanDecision(String planDecision) { this.planDecision = planDecision; }
+        public String getGradoSeleccionado() { return gradoSeleccionado; }
+        public void setGradoSeleccionado(String gradoSeleccionado) { this.gradoSeleccionado = gradoSeleccionado; }
+        public String getPais() { return pais; }
+        public void setPais(String pais) { this.pais = pais; }
+        public String getGradoObtenido() { return gradoObtenido; }
+        public void setGradoObtenido(String gradoObtenido) { this.gradoObtenido = gradoObtenido; }
+        public String getFechaGraduacion() { return fechaGraduacion; }
+        public void setFechaGraduacion(String fechaGraduacion) { this.fechaGraduacion = fechaGraduacion; }
     }
 }

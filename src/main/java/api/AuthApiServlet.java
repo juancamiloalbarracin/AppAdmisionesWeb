@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import repository.RepositoryFactory;
+import repository.UsuarioRepository;
 import utils.DatabaseConnection;
 import models.Usuario;
 import utils.JwtUtil;
@@ -82,15 +84,15 @@ public class AuthApiServlet extends HttpServlet {
             }
             
             // PRESERVADO: Exactamente la misma lógica de validación del LoginServlet original
-            DatabaseConnection db = new DatabaseConnection();
-            boolean valido = db.validarUsuario(loginReq.getEmail().trim(), loginReq.getPassword());
+            UsuarioRepository usuarioRepo = RepositoryFactory.getUsuarioRepository();
+            boolean valido = usuarioRepo.validateLogin(loginReq.getEmail().trim(), loginReq.getPassword());
             
             if (valido) {
                 // PRESERVADO: Guardar email de sesión
                 DatabaseConnection.setCurrentUserEmail(loginReq.getEmail().trim());
                 
                 // Obtener datos completos del usuario
-                Usuario usuario = db.obtenerUsuarioPorUsername(loginReq.getEmail().trim());
+                Usuario usuario = usuarioRepo.findByEmail(loginReq.getEmail().trim());
                 
                 // Crear sesión HTTP (mantenemos compatibilidad)
                 HttpSession session = request.getSession(true);
@@ -112,7 +114,7 @@ public class AuthApiServlet extends HttpServlet {
                 // NUEVO: Generar JWT token propio
                 String token = JwtUtil.generateToken(usuario.getEmail(), usuario.getNombre());
                 
-                db.closeConnection();
+                // No hay conexión directa aquí; repos se encargan.
                 
                 // Respuesta JSON exitosa
                 Map<String, Object> responseData = new HashMap<>();
@@ -127,7 +129,6 @@ public class AuthApiServlet extends HttpServlet {
                 
             } else {
                 // PRESERVADO: Mismo mensaje de error que en LoginServlet
-                db.closeConnection();
                 sendErrorResponse(response, 401, "Usuario o contraseña incorrectos.");
             }
             

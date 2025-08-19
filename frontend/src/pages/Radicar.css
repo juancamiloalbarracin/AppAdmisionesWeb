@@ -1,0 +1,21 @@
+/* Radicar estilos definidos en App.css */
+/* Los estilos .form-container, .form-grid, .form-group, etc. están en App.css */
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-primary {
+  background-color: #00264C;
+  color: white;
+}
+
+.solicitudes-list {
+  max-height: 600px;
+  overflow-y: auto;
+}

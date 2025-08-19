@@ -1,0 +1,441 @@
+===============================================================================
+                    APIS PARA PRUEBAS EN POSTMAN
+                    Sistema de Admisiones Web 
+                         Versión 1.0.0
+===============================================================================
+
+CONFIGURACIÓN GENERAL POSTMAN:
+- Base URL: http://localhost:8080
+- Content-Type: application/json (para todos los POST)
+- Cookies: Habilitar para mantener sesiones HTTP
+
+===============================================================================
+1. APIS DE AUTENTICACIÓN
+===============================================================================
+
+1.1 LOGIN DE USUARIO
+---------------------
+Método: POST
+URL: http://localhost:8080/api/auth/login
+Headers:
+  Content-Type: application/json
+
+Body (JSON):
+{
+  "email": "cespdro64@gmail.com",
+  "password": "123456",
+  "recordarme": false,
+  "pcPublico": false
+}
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Login exitoso",
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "nombres": "Cesar",
+    "apellidos": "Padro",
+    "email": "cespdro64@gmail.com"
+  },
+  "sessionId": "12345..."
+}
+
+Respuesta Error (400):
+{
+  "success": false,
+  "error": "Email o contraseña incorrectos"
+}
+
+---------------------
+
+1.2 LOGOUT DE USUARIO
+---------------------
+Método: POST
+URL: http://localhost:8080/api/auth/logout
+Headers:
+  Content-Type: application/json
+  Cookie: JSESSIONID=94C50E8C03FB4ACE209C97E3C497C150
+
+Body: (vacío)
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Logout exitoso"
+}
+
+---------------------
+
+1.3 OBTENER PERFIL DE USUARIO
+-----------------------------
+Método: GET
+URL: http://localhost:8080/api/auth/profile
+Headers:
+  Authorization: Bearer <token>
+  Cookie: JSESSIONID=<session_id>
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "user": {
+    "nombres": "Cesar",
+    "apellidos": "Padro",
+    "email": "cespdro64@gmail.com"
+  }
+}
+
+---------------------
+
+1.4 VALIDAR SESIÓN
+------------------
+Método: POST
+URL: http://localhost:8080/api/auth/validate
+Headers:
+  Content-Type: application/json
+  Cookie: JSESSIONID=<session_id>
+
+Body: (vacío)
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Sesión válida",
+  "user": {
+    "nombres": "Cesar",
+    "apellidos": "Padro",
+    "email": "cespdro64@gmail.com"
+  }
+}
+
+===============================================================================
+2. APIS DE USUARIOS
+===============================================================================
+
+2.1 REGISTRAR NUEVO USUARIO
+---------------------------
+Método: POST
+URL: http://localhost:8080/api/users/register
+Headers:
+  Content-Type: application/json
+
+Body (JSON):
+{
+  "nombres": "Juan Carlos",
+  "apellidos": "Albarracín",
+  "email": "juancarlos@gmail.com",
+  "password": "123456",
+  "tipoDocumento": "CC",
+  "numeroDocumento": "1234567890",
+  "telefono": "3001234567"
+}
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Usuario registrado exitosamente",
+  "userId": "66c123abc456def789"
+}
+
+Respuesta Error (400):
+{
+  "success": false,
+  "error": "El email ya está registrado"
+}
+
+===============================================================================
+3. APIS DE INFORMACIÓN PERSONAL
+===============================================================================
+
+3.1 GUARDAR INFORMACIÓN PERSONAL
+--------------------------------
+Método: POST
+URL: http://localhost:8080/api/info-personal/save
+Headers:
+  Content-Type: application/json
+  Cookie: JSESSIONID=<session_id>
+
+Body (JSON):
+{
+  "nombres": "Juan Carlos",
+  "apellidos": "Albarracín",
+  "tipo_documento": "CC",
+  "numero_documento": "1234567890",
+  "fecha_nacimiento": "1990-05-15",
+  "lugar_nacimiento": "Montería, Córdoba",
+  "genero": "Masculino",
+  "estado_civil": "Soltero",
+  "direccion": "Calle 45 # 23-67",
+  "telefono": "3001234567",
+  "email_alternativo": "alternativo@gmail.com",
+  "estrato_socioeconomico": "3"
+}
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Información personal guardada exitosamente"
+}
+
+---------------------
+
+3.2 OBTENER INFORMACIÓN PERSONAL
+--------------------------------
+Método: GET
+URL: http://localhost:8080/api/info-personal/get
+Headers:
+  Cookie: JSESSIONID=<session_id>
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "data": {
+    "nombres": "Juan Carlos",
+    "apellidos": "Albarracín",
+    "tipo_documento": "CC",
+    "numero_documento": "1234567890",
+    "fecha_nacimiento": "1990-05-15",
+    "lugar_nacimiento": "Montería, Córdoba",
+    "genero": "Masculino",
+    "estado_civil": "Soltero",
+    "direccion": "Calle 45 # 23-67",
+    "telefono": "3001234567",
+    "email_alternativo": "alternativo@gmail.com",
+    "estrato_socioeconomico": "3"
+  }
+}
+
+Respuesta Sin Datos (200):
+{
+  "success": true,
+  "message": "No hay información personal registrada"
+}
+
+===============================================================================
+4. APIS DE INFORMACIÓN ACADÉMICA
+===============================================================================
+
+4.1 GUARDAR INFORMACIÓN ACADÉMICA
+---------------------------------
+Método: POST
+URL: http://localhost:8080/api/info-academica/save
+Headers:
+  Content-Type: application/json
+  Cookie: JSESSIONID=<session_id>
+
+Body (JSON):
+{
+  "nivel": "Pregrado",
+  "sede": "Montería",
+  "grado_academico": "Bachiller",
+  "periodo_admision": "2025-1",
+  "metodologia": "Presencial",
+  "jornada": "Diurna",
+  "plan_decision": "Plan A",
+  "grado_seleccionado": "Ingeniería de Sistemas",
+  "pais": "Colombia",
+  "grado_obtenido": "Bachiller Académico",
+  "fecha_graduacion": "2018-12-15"
+}
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Información académica guardada exitosamente"
+}
+
+---------------------
+
+4.2 OBTENER INFORMACIÓN ACADÉMICA
+---------------------------------
+Método: GET
+URL: http://localhost:8080/api/info-academica/get
+Headers:
+  Cookie: JSESSIONID=<session_id>
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "data": {
+    "nivel": "Pregrado",
+    "sede": "Montería",
+    "grado_academico": "Bachiller",
+    "periodo_admision": "2025-1",
+    "metodologia": "Presencial",
+    "jornada": "Diurna",
+    "plan_decision": "Plan A",
+    "grado_seleccionado": "Ingeniería de Sistemas",
+    "pais": "Colombia",
+    "grado_obtenido": "Bachiller Académico",
+    "fecha_graduacion": "2018-12-15"
+  }
+}
+
+===============================================================================
+5. APIS DE SOLICITUDES
+===============================================================================
+
+5.1 RADICAR SOLICITUD DE ADMISIÓN
+---------------------------------
+Método: POST
+URL: http://localhost:8080/api/solicitudes/radicar
+Headers:
+  Content-Type: application/json
+  Cookie: JSESSIONID=<session_id>
+
+Body (JSON):
+{
+  "tipo_solicitud": "Admisión Pregrado",
+  "telefono_contacto": "3001234567",
+  "email_notificacion": "notificaciones@gmail.com"
+}
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "message": "Solicitud radicada exitosamente",
+  "numeroRadicado": "ADM-2025-001234",
+  "fechaRadicacion": "2025-08-16"
+}
+
+---------------------
+
+5.2 LISTAR SOLICITUDES DEL USUARIO
+----------------------------------
+Método: GET
+URL: http://localhost:8080/api/solicitudes/list
+Headers:
+  Cookie: JSESSIONID=<session_id>
+
+Respuesta Exitosa (200):
+{
+  "success": true,
+  "solicitudes": [
+    {
+      "numero_radicado": "ADM-2025-001234",
+      "tipo_solicitud": "Admisión Pregrado",
+      "telefono_contacto": "3001234567",
+      "email_notificacion": "notificaciones@gmail.com",
+      "estado": "Radicada",
+      "fecha_radicacion": "2025-08-16"
+    }
+  ]
+}
+
+===============================================================================
+6. CASOS DE PRUEBA RECOMENDADOS
+===============================================================================
+
+SECUENCIA COMPLETA DE PRUEBAS:
+------------------------------
+
+1. REGISTRO Y LOGIN:
+   - Registrar nuevo usuario (POST /api/users/register)
+   - Hacer login (POST /api/auth/login)
+   - Validar sesión (POST /api/auth/validate)
+   - Obtener perfil (GET /api/auth/profile)
+
+2. INFORMACIÓN PERSONAL:
+   - Guardar información personal (POST /api/info-personal/save)
+   - Obtener información guardada (GET /api/info-personal/get)
+
+3. INFORMACIÓN ACADÉMICA:
+   - Guardar información académica (POST /api/info-academica/save)
+   - Obtener información académica (GET /api/info-academica/get)
+
+4. SOLICITUDES:
+   - Radicar solicitud (POST /api/solicitudes/radicar)
+   - Listar solicitudes (GET /api/solicitudes/list)
+
+5. CIERRE DE SESIÓN:
+   - Logout (POST /api/auth/logout)
+
+CASOS DE ERROR PARA PROBAR:
+---------------------------
+
+1. LOGIN CON CREDENCIALES INCORRECTAS:
+   Body: {"email": "inexistente@gmail.com", "password": "wrong"}
+   Esperado: 400 Bad Request
+
+2. ACCESO SIN AUTENTICACIÓN:
+   - Probar GET /api/info-personal/get sin Cookie de sesión
+   - Esperado: 401 Unauthorized o redirect a login
+
+3. REGISTRO CON EMAIL DUPLICADO:
+   - Registrar usuario con email ya existente
+   - Esperado: 400 Bad Request con mensaje de error
+
+4. DATOS INVÁLIDOS:
+   - Enviar JSON malformado
+   - Campos requeridos vacíos
+   - Esperado: 400 Bad Request
+
+===============================================================================
+7. CONFIGURACIÓN POSTMAN COLLECTION
+===============================================================================
+
+VARIABLES DE ENTORNO RECOMENDADAS:
+----------------------------------
+- base_url: http://localhost:8080
+- session_cookie: (se actualiza automáticamente)
+- auth_token: (se actualiza tras login)
+- test_email: cespdro64@gmail.com
+- test_password: 123456
+
+SCRIPTS DE PRE-REQUEST (Para mantener cookies):
+-----------------------------------------------
+// Mantener cookie de sesión
+pm.request.headers.add({
+    key: 'Cookie',
+    value: 'JSESSIONID=' + pm.environment.get('session_cookie')
+});
+
+SCRIPTS DE TEST (Para extraer tokens):
+-------------------------------------
+// Extraer token de login
+if (pm.response.code === 200) {
+    const responseJson = pm.response.json();
+    if (responseJson.token) {
+        pm.environment.set('auth_token', responseJson.token);
+    }
+    if (responseJson.sessionId) {
+        pm.environment.set('session_cookie', responseJson.sessionId);
+    }
+}
+
+===============================================================================
+8. NOTAS IMPORTANTES
+===============================================================================
+
+1. SESIONES HTTP:
+   - Las APIs usan sesiones HTTP para mantener el estado
+   - Es crucial mantener las cookies entre requests
+   - El JSESSIONID se genera automáticamente tras login
+
+2. ORDEN DE OPERACIONES:
+   - SIEMPRE hacer login antes de acceder a APIs protegidas
+   - La información personal debe guardarse antes que la académica
+   - Las solicitudes requieren información previa completa
+
+3. CÓDIGOS DE RESPUESTA:
+   - 200: Operación exitosa
+   - 400: Error de validación o datos inválidos
+   - 401: No autenticado
+   - 404: Endpoint no encontrado
+   - 500: Error interno del servidor
+
+4. FORMATO DE FECHAS:
+   - Usar formato ISO: YYYY-MM-DD
+   - Ejemplo: "2025-08-16"
+
+5. BASE DE DATOS:
+   - MongoDB debe estar ejecutándose en puerto 27017
+   - Base de datos: "admisiones"
+   - Las pruebas crean datos reales en la base
+
+===============================================================================
+                            FIN DE DOCUMENTACIÓN
+                         APIs para Pruebas Postman
+                             Versión 1.0.0
+                          Fecha: 16 de Agosto, 2025
+===============================================================================
